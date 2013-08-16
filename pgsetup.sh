@@ -18,6 +18,7 @@ sudo apt-get install -y postgresql postgresql-contrib
 
 # Symlink into home.
 # Note the use of backticks, PWD, and the -t flag.
+# allows for auto-login with "psql"
 ln -sf `ls $PWD/.pgpass` -t $HOME
 chmod 600 $HOME"/.pgpass"
 

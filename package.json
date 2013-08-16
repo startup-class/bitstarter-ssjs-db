@@ -6,6 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/startup-class/bitstarter-ssjs-db.git"
+  },
   "dependencies": {
     "sequelize": "~2.0.0-alpha2",
     "pg": "~2.3.1",

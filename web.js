@@ -33,6 +33,50 @@ app.get('/orders', function(request, response) {
   });
 });
 
+// Show some configuration variables -- this works, but isn't at all secure,
+// so we shouldn't actually use it in production
+/*
+app.get('/dbconfig', function(request, response) {
+    response.send(global.db.sequelize.config);
+});
+*/
+
+// This is also not very secure (mind you, /orders isn't either), and is also
+// pretty ugly.  But it felt good to write and get working!
+// ah go on, let it run -- when in Development
+app.get('/addrs', function(request, response) {
+  if (process.env.DEVELOPMENT) {
+      https.get("https://coinbase.com/api/v1/addresses?api_key=" + process.env.COINBASE_API_KEY, function(res) {
+	var body = '';
+	res.on('data', function(chunk) {body += chunk;});
+	res.on('end', function() {
+    //	response.send("Hi, here are your addresses:" + body);
+	    var output = '';
+	    var addresses_json = JSON.parse(body);
+	    if (addresses_json.error) {
+	      response.send(addresses_json.error);
+	      return;
+	    }
+	    // don't bother with fancy DB entries or asynchronicity
+	    addresses_json.addresses.forEach(function(address) {
+		    output += "address " + address.address.address +
+				  " at " + address.address.created_at + "<br>";
+		});
+	    response.send("Your addresses:<br>" + output);
+	});
+
+	res.on('error', function(e) {
+	  console.log(e);
+	  response.send("error getting addresses");
+	});
+      });
+    }
+    else {
+	response.send("nope, nothing to see here.");
+    }
+});
+// end little test
+
 // Hit this URL while on example.com/orders to refresh
 app.get('/refresh_orders', function(request, response) {
   https.get("https://coinbase.com/api/v1/orders?api_key=" + process.env.COINBASE_API_KEY, function(res) {
